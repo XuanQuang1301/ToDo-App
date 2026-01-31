@@ -1,50 +1,65 @@
-# Welcome to your Expo app 👋
+# My Todo List App 📱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Một ứng dụng quản lý công việc đơn giản và hiệu quả, được xây dựng bằng **React Native** và **Expo**. Ứng dụng giúp bạn theo dõi các đầu việc cần làm, đánh dấu hoàn thành và quản lý tiến độ hàng ngày.
 
-## Get started
+![Project Banner](https://via.placeholder.com/800x400?text=My+Todo+App+Demo)
+*(Bạn có thể thay thế dòng này bằng đường dẫn ảnh chụp màn hình ứng dụng của bạn trong thư mục assets)*
 
-1. Install dependencies
+## ✨ Tính năng chính
 
-   ```bash
-   npm install
-   ```
+* **Thêm công việc mới:** Nhập tiêu đề và mô tả chi tiết cho công việc.
+* **Danh sách công việc:** Hiển thị trực quan danh sách các việc cần làm.
+* **Trạng thái công việc:**
+    * Đánh dấu đã xong (Check hoàn thành).
+    * Hiển thị màu sắc khác biệt giữa việc đang làm và việc đã xong.
+* **Xóa công việc:** Loại bỏ công việc khỏi danh sách bằng nút xóa (Trash icon).
+* **Thống kê:** Hiển thị số lượng công việc cần làm hiện tại (Ví dụ: "7 công việc cần làm").
+* **Giao diện:** Thiết kế tối (Dark Mode) hiện đại, dễ nhìn.
 
-2. Start the app
+## 🛠️ Công nghệ sử dụng
 
-   ```bash
-   npx expo start
-   ```
+* **Core:** [React Native](https://reactnative.dev/), [Expo](https://expo.dev/)
+* **Ngôn ngữ:** [TypeScript](https://www.typescriptlang.org/)
+* **Routing:** Expo Router (cấu trúc thư mục `app/(tabs)`)
+* **State Management:** Custom Store (`store/todoStore.ts`)
+* **Icons:** @expo/vector-icons (MaterialIcons)
+* **Lưu trữ:** Local Storage
 
-In the output, you'll find options to open the app in a
+## 🚀 Cài đặt và Chạy dự án (Quick Start)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+Bạn hãy chạy lần lượt các lệnh dưới đây trong Terminal để tải về và khởi chạy ứng dụng:
 ```bash
-npm run reset-project
+# 1. Clone dự án và di chuyển vào thư mục
+git clone [https://github.com/XuanQuang1301/ToDo-App.git](https://github.com/XuanQuang1301/ToDo-App.git)
+cd ToDo-App
+
+# 2. Cài đặt các thư viện cần thiết
+npm install
+# (Hoặc dùng 'yarn install' nếu bạn thích)
+
+# 3. Khởi chạy ứng dụng
+npx expo start
+
+Sau khi chạy xong, nhấn a để mở trên Android hoặc i để mở trên iOS.
 ```
+📂 Cấu trúc thư mục
+ToDo-App/
+├── app/                 # Chứa các màn hình và điều hướng (Expo Router)
+│   ├── (tabs)/          # Các tab chính của ứng dụng
+│   └── ...
+├── components/          # Các component tái sử dụng (Button, Card, Input...)
+├── constants/           # Các hằng số (Colors, Fonts...)
+├── hooks/               # Custom hooks
+├── store/               # Quản lý trạng thái (State Management)
+├── assets/              # Hình ảnh, fonts, icons
+└── ...
+🤝 Đóng góp
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Mọi đóng góp đều được hoan nghênh! Nếu bạn tìm thấy lỗi hoặc muốn thêm tính năng mới, hãy tạo một Issue hoặc gửi Pull Request.
 
-## Learn more
+## 👤 Author
+**Xuan Quang**
+- GitHub: [@XuanQuang1301](https://github.com/XuanQuang1301)
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+*⭐️ Star dự án này nếu bạn thấy nó hữu ích!*
