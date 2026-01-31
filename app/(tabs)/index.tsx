@@ -1,270 +1,136 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import InputModal from '../modal';
+import FilterButton from '../../components/FilterButton';
+import InputModal from '../../components/InputModal';
+import TodoItem, { Todo } from '../../components/TodoItem';
+import { COLORS } from '../../constants/colors';
 
-interface Todo{
-  id: string, 
-  title: string, 
-  description: string, 
-  isDone: boolean
-} 
 const STORAGE_KEY = 'MY_TODO_APP_DATA';
-export default function App(){
-  const [todos, setTodos] = useState([
-    {id: '1', title: 'Học React Native heheh ', description: "Làm xong phần cơ bản", isDone: false}, 
-    {id: '2', title: 'Tập thể dục!!!', description: 'Đều đặn hàng ngày', isDone: true}, 
-    {id: '3', title: 'Lam bai tap ve nha', description: 'lam xong', isDone: false}
-  ]); 
-  const [modalVisible, setModalVisible] = useState(false); 
-  //Qly Tab loc(all | active | done)
-  const [filterStatus, setFilterStatus] = useState('all'); 
-  const toggleTodo = (id: string) => {
-    setTodos(todos.map(item => 
-      item.id === id ? {...item, isDone: !item.isDone} : item
-    ))
-  }
-  const deleteTodo = (id: string) => {
-    Alert.alert("Xác nhận xóa", "Bạn có chắc muốn xóa công việc này không?", [
-      {text: "Hủy", style: 'cancel'}, 
-      {text: "Xóa", style: 'destructive', onPress: () => setTodos(todos.filter(item => item.id !== id))}
-    ])
-  }
-  {/*Giao diện*/}
-  const renderTodoItem= ({item} :{item:Todo}) => (
-    <View style = {[styles.itemContainer]}> 
-      <TouchableOpacity
-      style = {styles.itemContentTouchable}
-      onPress = {() => toggleTodo(item.id)}
-      activeOpacity={0.7}
-      > 
-      <Text style = {styles.checkBoxIcon}> {item.isDone ? "✅" : "⬜"} </Text>
-      <View style = {styles.textContainer}> 
-        <Text style = {[styles.itemTitle, item.isDone && styles.textDone]}> 
-            {item.title}
-        </Text>
-        {item.description ? (
-          <Text style = {[styles.itemDescription, item.isDone && styles.textDone]} numberOfLines={2}> 
-            {item.description}
-          </Text>
-        ) : null}
-      </View>
-      </TouchableOpacity>
-      <TouchableOpacity
-      onPress={() => deleteTodo(item.id)}
-      style = {styles.deleteBtn}
-      > 
-      {/* <Text style = {styles.deleteIcon}>🗑️👊</Text> */}
-      <MaterialIcons 
-        name="delete-forever" 
-        size={22} 
-        color={COLORS.danger} 
-      />
-      </TouchableOpacity>
-    </View>
-  ) 
-  const handleAddData = (title: string, desc: string) => {
-    const newTodo = {
-      id: Date.now().toString(), 
-      title: title.trim(), 
-      description: desc.trim(), 
-      isDone: false
-    }
-    setTodos([newTodo, ...todos]); 
-    setModalVisible(false); 
-  }
+
+export default function App() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('all');
+
+  // --- LOGIC STORAGE ---
   useEffect(() => {
-    if(todos.length > 0){
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(todos)); 
+    const loadTodos = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
+        if (jsonValue) setTodos(JSON.parse(jsonValue));
+      } catch (e) { console.error("Lỗi đọc data"); }
+    };
+    loadTodos();
+  }, []);
+
+  useEffect(() => {
+    const saveTodos = async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+      } catch (e) { console.error("Lỗi lưu data"); }
     }
-  }, [todos])
+    saveTodos();
+  }, [todos]);
 
-  //Lọc  danh sách  
-  const getFilteredList  = () => {
-    if(filterStatus === 'active') return todos.filter(t => !t.isDone); 
-    if(filterStatus === 'done') return todos.filter(t => t.isDone); 
-      return todos; 
-  }
+  // --- LOGIC XỬ LÝ ---
+  const handleAddData = (title: string, desc: string) => {
+    const newTodo: Todo = {
+      id: Date.now().toString(),
+      title: title.trim(),
+      description: desc.trim(),
+      isDone: false
+    };
+    setTodos([newTodo, ...todos]);
+    setModalVisible(false);
+  };
 
-  //Component nút Filter nhỏ 
-  const FilterButton = ({title, value} : {title: string, value: string}) => (
-    <TouchableOpacity
-      style = {[styles.filterBtn, filterStatus === value && styles.filterBtnActive]}
-      onPress={() => setFilterStatus(value)}
-    > 
-      <Text style = {[styles.filterText, filterStatus === value && styles.filterBtnActive]}> 
-        {title}
-      </Text>
-    </TouchableOpacity>
-  )
+  const toggleTodo = (id: string) => {
+    setTodos(todos.map(item =>
+      item.id === id ? { ...item, isDone: !item.isDone } : item
+    ));
+  };
+
+  const deleteTodo = (id: string) => {
+    Alert.alert("Xác nhận xóa", "Bạn có chắc muốn xóa?", [
+      { text: "Hủy", style: 'cancel' },
+      { text: "Xóa", style: 'destructive', onPress: () => setTodos(todos.filter(i => i.id !== id)) }
+    ]);
+  };
+
+  const getFilteredList = () => {
+    if (filterStatus === 'active') return todos.filter(t => !t.isDone);
+    if (filterStatus === 'done') return todos.filter(t => t.isDone);
+    return todos;
+  };
+
+  // --- GIAO DIỆN CHÍNH ---
   return (
-    <SafeAreaView style = {styles.container}>
-      <StatusBar style = "light" backgroundColor={COLORS.background}  />
-      {/*Header*/}
-      <View style = {styles.header}> 
-          <Text style = {styles.headerTitle}> My Todo List</Text>
-          <Text style = {styles.headerSubtitle}> {todos.filter(t => !t.isDone).length} công việc cần làm!!!</Text>
+    <SafeAreaView style={styles.container}>
+      <StatusBar style="light" backgroundColor={COLORS.background} />
+
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>My Todo List</Text>
+        <Text style={styles.headerSubtitle}>
+          {todos.filter(t => !t.isDone).length} công việc cần làm
+        </Text>
       </View>
-      <View style = {styles.filterContainer}> 
-        <FilterButton title = "Tất cả" value = "all" /> 
-        <FilterButton title="Đang làm" value="active" />
-        <FilterButton title="Đã xong" value="done" />
+
+      {/* Bộ lọc */}
+      <View style={styles.filterContainer}>
+        <FilterButton title="Tất cả" value="all" currentStatus={filterStatus} onPress={setFilterStatus} />
+        <FilterButton title="Đang làm" value="active" currentStatus={filterStatus} onPress={setFilterStatus} />
+        <FilterButton title="Đã xong" value="done" currentStatus={filterStatus} onPress={setFilterStatus} />
       </View>
-      {/*List công việc*/ }      
-      <FlatList 
-      data = {getFilteredList()}
-      keyExtractor={item => item.id}
-      renderItem={renderTodoItem}
-      contentContainerStyle = {styles.listContent}
-      keyboardShouldPersistTaps="handled"
-      ListEmptyComponent={
-          <Text style={{color: '#666', textAlign:'center', marginTop: 50}}>
-             Không có công việc nào
-          </Text>
+
+      {/* Danh sách */}
+      <FlatList
+        data={getFilteredList()}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContent}
+        // Gọi Component TodoItem 
+        renderItem={({ item }) => (
+          <TodoItem item={item} onToggle={toggleTodo} onDelete={deleteTodo} />
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Không có công việc nào</Text>
         }
-      /> 
-      <TouchableOpacity 
-        style = {styles.fab}
+      />
+
+      {/* Nút FAB */}
+      <TouchableOpacity
+        style={styles.fab}
         onPress={() => setModalVisible(true)}
         activeOpacity={0.8}
-      >  
-      <Text style={styles.fabIcon}>+</Text>
+      >
+        <Text style={styles.fabIcon}>+</Text>
       </TouchableOpacity>
-      <InputModal   
+
+      {/* Modal Nhập liệu */}
+      <InputModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSave={handleAddData}
       />
     </SafeAreaView>
-  )
-}; 
-const COLORS = {
-  background: '#121212',    // Nền chính tối hẳn
-  cardBg: '#222222',        // Nền của các thẻ (sáng hơn nền chính chút)
-  primary: '#00E676',       // Màu xanh lá tươi (Accent color)
-  textMain: '#FFFFFF',      // Chữ chính màu trắng
-  textSub: '#AAAAAA',       // Chữ phụ (mô tả) màu xám
-  border: '#333333',        // Màu viền nhẹ
-  danger: '#FF5252'         // Màu đỏ cho nút xóa
-};
+  );
+}
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, 
-    backgroundColor: COLORS.background
-  }, 
-  itemContainer: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'space-between', 
-    backgroundColor: COLORS.cardBg, 
-    padding: 16, 
-    borderRadius: 15, 
-    marginVertical: 6, 
-    borderWidth: 1, 
-    borderColor: COLORS.border
-  }, 
-  itemContentTouchable: {
-    flexDirection: 'row', 
-    alignItems: 'flex-start', 
-    flex: 1
-
-  }, checkBoxIcon:{
-    fontSize: 20, 
-    marginRight: 12,  
-    marginTop: 2
-  }, textContainer:{
-    flex: 1, 
-    justifyContent: 'center'
-  }, 
-  itemTitle: {
-    color: COLORS.textMain, 
-    fontSize: 17, 
-    fontWeight: '600', 
-    marginBottom: 4
-  }, textDone:{
-    textDecorationLine: 'line-through', 
-    color: '#555555'
-  }, itemDescription:{
-    color: COLORS.textSub, 
-    fontSize: 14
-  }, deleteBtn: {
-      padding: 10, 
-      backgroundColor: '#2a1212', 
-      borderRadius: 8, 
-      marginLeft: 8
-  }, deleteIcon: {
-    fontSize: 18, 
-    color: COLORS.danger
-  }, header:{
-    padding: 20, 
-    paddingTop: 10, 
-    backgroundColor: COLORS.background
-  }, headerTitle:{
-      fontSize: 28, 
-      fontWeight: '800', 
-      color: COLORS.primary, 
-      marginBottom: 5
-  }, headerSubtitle: {
-    fontSize: 14, 
-    color: 'white', 
-  }, 
-  listContent: {
-    padding: 16, 
-    paddingBottom: 20, 
-  }, 
-  addButtonText:{
-    fontSize: 16, 
-    color: '#000000', 
-    fontWeight: 'bold', 
-    letterSpacing: 1
-  }, 
+  container: { flex: 1, backgroundColor: COLORS.background },
+  header: { padding: 20, paddingTop: 10, backgroundColor: COLORS.background },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: COLORS.primary, marginBottom: 5 },
+  headerSubtitle: { fontSize: 14, color: 'white' },
+  filterContainer: { flexDirection: 'row', paddingHorizontal: 20, marginBottom: 10 },
+  listContent: { padding: 16, paddingBottom: 100 },
+  emptyText: { color: '#666', textAlign: 'center', marginTop: 50 },
   fab: {
-    position: 'absolute', 
-    bottom: 30, 
-    right: 20, 
-    width: 60, 
-    height: 60, 
-    borderRadius: 30, 
-    backgroundColor: COLORS.primary, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    // Tạo bóng đổ cho nút nổi lên trên 
-    elevation: 5, 
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 4}, 
-    shadowOpacity:0.3, 
-    shadowRadius: 4
-  }, 
-  fabIcon: {
-    fontSize: 32,       // Kích thước dấu cộng
-    color: '#000000',   // Màu chữ đen
-    fontWeight: 'bold',
-    marginTop: -3
-  }, filterBtn: {
-    paddingVertical: 8, 
-    paddingHorizontal: 16, 
-    borderRadius: 20, 
-    borderWidth: 1, 
-    borderColor: COLORS.border, 
-    marginRight: 10, 
-    backgroundColor: COLORS.cardBg
-  }, filterBtnActive: {
-      backgroundColor: COLORS.primary, 
-      borderColor: COLORS.primary, 
-
-  }, filterText: {
-      color: 'white', 
-      fontWeight: '600', 
-      fontSize: 13
-  }, filterTextActive: {
-      color: '#000', 
-      fontWeight: 'bold'
-  }, filterContainer:{
-    flexDirection: 'row', 
-    paddingHorizontal: 20, 
-    marginBottom: 10
-  }
-})
+    position: 'absolute', bottom: 30, right: 20, width: 60, height: 60,
+    borderRadius: 30, backgroundColor: COLORS.primary,
+    justifyContent: 'center', alignItems: 'center', elevation: 5,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 4
+  },
+  fabIcon: { fontSize: 32, color: '#000', fontWeight: 'bold', marginTop: -3 }
+});
