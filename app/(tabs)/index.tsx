@@ -113,7 +113,7 @@ export default function App(){
       >  
       <Text style={styles.fabIcon}>+</Text>
       </TouchableOpacity>
-      <InputModal 
+      <InputModal   
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSave={handleAddData}

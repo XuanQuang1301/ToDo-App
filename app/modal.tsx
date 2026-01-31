@@ -25,7 +25,7 @@ export default function InputModal({ visible, onClose, onSave }: InputModalProps
     if(visible){
         setTitle(''); 
         setDesc(''); 
-    }
+    } 
   }, [visible]); 
   const handleSave = () => {
     if(title.trim().length === 0) {
