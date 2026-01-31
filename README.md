@@ -2,8 +2,6 @@
 
 Một ứng dụng quản lý công việc đơn giản và hiệu quả, được xây dựng bằng **React Native** và **Expo**. Ứng dụng giúp bạn theo dõi các đầu việc cần làm, đánh dấu hoàn thành và quản lý tiến độ hàng ngày.
 
-![Project Banner](https://via.placeholder.com/800x400?text=My+Todo+App+Demo)
-*(Bạn có thể thay thế dòng này bằng đường dẫn ảnh chụp màn hình ứng dụng của bạn trong thư mục assets)*
 
 ## ✨ Tính năng chính
 
@@ -42,17 +40,7 @@ npx expo start
 
 Sau khi chạy xong, nhấn a để mở trên Android hoặc i để mở trên iOS.
 ```
-📂 Cấu trúc thư mục
-ToDo-App/
-├── app/                 # Chứa các màn hình và điều hướng (Expo Router)
-│   ├── (tabs)/          # Các tab chính của ứng dụng
-│   └── ...
-├── components/          # Các component tái sử dụng (Button, Card, Input...)
-├── constants/           # Các hằng số (Colors, Fonts...)
-├── hooks/               # Custom hooks
-├── store/               # Quản lý trạng thái (State Management)
-├── assets/              # Hình ảnh, fonts, icons
-└── ...
+
 🤝 Đóng góp
 
 Mọi đóng góp đều được hoan nghênh! Nếu bạn tìm thấy lỗi hoặc muốn thêm tính năng mới, hãy tạo một Issue hoặc gửi Pull Request.
