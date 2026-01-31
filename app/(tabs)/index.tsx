@@ -1,6 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import InputModal from '../modal';
@@ -11,31 +12,16 @@ interface Todo{
   description: string, 
   isDone: boolean
 } 
+const STORAGE_KEY = 'MY_TODO_APP_DATA';
 export default function App(){
   const [todos, setTodos] = useState([
-    {id: '1', title: 'Học React Native', description: "Làm xong phần cơ bản", isDone: false}, 
+    {id: '1', title: 'Học React Native heheh ', description: "Làm xong phần cơ bản", isDone: false}, 
     {id: '2', title: 'Tập thể dục!!!', description: 'Đều đặn hàng ngày', isDone: true}, 
     {id: '3', title: 'Lam bai tap ve nha', description: 'lam xong', isDone: false}
   ]); 
-  const [titleText, setTitletext] = useState(''); 
-  const [descText, setDescText] = useState(''); 
   const [modalVisible, setModalVisible] = useState(false); 
-  
-  const handleAdd = ()=> {
-    if(titleText.trim().length === 0){
-      Alert.alert("Chưa có phần tiêu đề...", "Bạn cần nhập tiêu đề..."); 
-      return; 
-    }
-    const newTodo = {
-      id: Date.now().toString(), 
-      title: titleText.trim(), 
-      description: descText.trim(), 
-      isDone: false
-    }; 
-  setTodos([newTodo, ...todos]); 
-  setTitletext(''); 
-  setDescText(''); 
-  }
+  //Qly Tab loc(all | active | done)
+  const [filterStatus, setFilterStatus] = useState('all'); 
   const toggleTodo = (id: string) => {
     setTodos(todos.map(item => 
       item.id === id ? {...item, isDone: !item.isDone} : item
@@ -90,6 +76,30 @@ export default function App(){
     setTodos([newTodo, ...todos]); 
     setModalVisible(false); 
   }
+  useEffect(() => {
+    if(todos.length > 0){
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(todos)); 
+    }
+  }, [todos])
+
+  //Lọc  danh sách  
+  const getFilteredList  = () => {
+    if(filterStatus === 'active') return todos.filter(t => !t.isDone); 
+    if(filterStatus === 'done') return todos.filter(t => t.isDone); 
+      return todos; 
+  }
+
+  //Component nút Filter nhỏ 
+  const FilterButton = ({title, value} : {title: string, value: string}) => (
+    <TouchableOpacity
+      style = {[styles.filterBtn, filterStatus === value && styles.filterBtnActive]}
+      onPress={() => setFilterStatus(value)}
+    > 
+      <Text style = {[styles.filterText, filterStatus === value && styles.filterBtnActive]}> 
+        {title}
+      </Text>
+    </TouchableOpacity>
+  )
   return (
     <SafeAreaView style = {styles.container}>
       <StatusBar style = "light" backgroundColor={COLORS.background}  />
@@ -98,13 +108,23 @@ export default function App(){
           <Text style = {styles.headerTitle}> My Todo List</Text>
           <Text style = {styles.headerSubtitle}> {todos.filter(t => !t.isDone).length} công việc cần làm!!!</Text>
       </View>
+      <View style = {styles.filterContainer}> 
+        <FilterButton title = "Tất cả" value = "all" /> 
+        <FilterButton title="Đang làm" value="active" />
+        <FilterButton title="Đã xong" value="done" />
+      </View>
       {/*List công việc*/ }      
       <FlatList 
-      data = {todos}
+      data = {getFilteredList()}
       keyExtractor={item => item.id}
       renderItem={renderTodoItem}
       contentContainerStyle = {styles.listContent}
       keyboardShouldPersistTaps="handled"
+      ListEmptyComponent={
+          <Text style={{color: '#666', textAlign:'center', marginTop: 50}}>
+             Không có công việc nào
+          </Text>
+        }
       /> 
       <TouchableOpacity 
         style = {styles.fab}
@@ -194,41 +214,6 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 16, 
     paddingBottom: 20, 
-  }, formContainer: {
-      padding: 16, backgroundColor: COLORS.cardBg, 
-      borderTopWidth: 1, 
-      borderTopColor: COLORS.border, 
-      borderRadius: 20, 
-      elevation: 10,  // tạo bóng đổ
-      shadowColor: '#000', 
-      shadowOffset: {width: 0, height: -3}, 
-      shadowOpacity: 0.2, shadowRadius: 5
-  }, inputTitle: {
-    backgroundColor: COLORS.background, 
-    color: COLORS.textMain, 
-    padding: 15, 
-    borderRadius: 12, 
-    fontSize: 16, 
-    fontWeight: '600', 
-    marginBottom: 10, 
-    borderWidth: 1, 
-    borderColor: COLORS.border
-  }, inputDesc: {
-    backgroundColor: COLORS.background, 
-    color: COLORS.textMain, 
-    padding: 15, 
-    borderRadius: 12, 
-    fontSize: 14, 
-    marginBottom: 15, 
-    borderWidth: 1, 
-    borderColor: COLORS.border, 
-    height: 80
-  }, addButton:{
-    backgroundColor: COLORS.primary, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    padding: 16, 
-    borderRadius: 16
   }, 
   addButtonText:{
     fontSize: 16, 
@@ -258,5 +243,28 @@ const styles = StyleSheet.create({
     color: '#000000',   // Màu chữ đen
     fontWeight: 'bold',
     marginTop: -3
+  }, filterBtn: {
+    paddingVertical: 8, 
+    paddingHorizontal: 16, 
+    borderRadius: 20, 
+    borderWidth: 1, 
+    borderColor: COLORS.border, 
+    marginRight: 10, 
+    backgroundColor: COLORS.cardBg
+  }, filterBtnActive: {
+      backgroundColor: COLORS.primary, 
+      borderColor: COLORS.primary, 
+
+  }, filterText: {
+      color: 'white', 
+      fontWeight: '600', 
+      fontSize: 13
+  }, filterTextActive: {
+      color: '#000', 
+      fontWeight: 'bold'
+  }, filterContainer:{
+    flexDirection: 'row', 
+    paddingHorizontal: 20, 
+    marginBottom: 10
   }
 })

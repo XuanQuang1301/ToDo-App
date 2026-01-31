@@ -95,7 +95,7 @@ const COLORS = {
   background: '#121212',
   cardBg: '#222222',
   primary: '#00E676',
-  textMain: '#FFFFFF',
+  textMain: 'white',
   textSub: '#AAAAAA',
   border: '#333333',
   inputBg: '#2C2C2C'
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: COLORS.border
   }, label: {
-    color: COLORS.textSub, 
+    color: 'white', 
     marginBottom: 8, 
     marginTop: 16, 
     fontWeight: '600'
