@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, SectionList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FilterButton from '../../components/FilterButton';
 import InputModal from '../../components/InputModal';
@@ -60,10 +60,21 @@ export default function App() {
     ]);
   };
 
-  const getFilteredList = () => {
-    if (filterStatus === 'active') return todos.filter(t => !t.isDone);
-    if (filterStatus === 'done') return todos.filter(t => t.isDone);
-    return todos;
+  const getSection = () => {
+    const activeList = todos.filter(t=> !t.isDone); 
+    const doneList = todos.filter(t=> t.isDone); 
+    let sections = []; 
+    if(filterStatus === 'all' || filterStatus === 'active'){
+      if(activeList.length > 0){
+        sections.push({title: 'Đang làm', data: activeList }); 
+      }
+    }
+    if(filterStatus === 'all' || filterStatus === 'done'){
+      if(doneList.length > 0){
+        sections.push({title: 'Đã hoàn thành', data: doneList}); 
+      }
+    }
+    return sections; 
   };
 
   // --- GIAO DIỆN CHÍNH ---
@@ -87,18 +98,22 @@ export default function App() {
       </View>
 
       {/* Danh sách */}
-      <FlatList
-        data={getFilteredList()}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContent}
-        // Gọi Component TodoItem 
-        renderItem={({ item }) => (
-          <TodoItem item={item} onToggle={toggleTodo} onDelete={deleteTodo} />
+      <SectionList 
+        sections= {getSection()}
+        keyExtractor={(item)=> item.id}
+        renderItem={({item}) => (
+          <TodoItem item = {item} onToggle={toggleTodo} onDelete={deleteTodo}/>
         )}
+        renderSectionHeader={({section: {title}})=> (
+          <Text style = {styles.sectionHeader}> {title} </Text>
+        )}
+        contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Không có công việc nào</Text>
+          <Text style = {{color: '#666', textAlign: 'center', marginTop: 50}}> 
+            Không có công việc nào 
+          </Text>
         }
-      />
+      /> 
 
       {/* Nút FAB */}
       <TouchableOpacity
@@ -132,5 +147,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center', elevation: 5,
     shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 4
   },
-  fabIcon: { fontSize: 32, color: '#000', fontWeight: 'bold', marginTop: -3 }
+  fabIcon: { fontSize: 32, color: '#000', fontWeight: 'bold', marginTop: -3 },
+   sectionHeader: {
+    color: COLORS.textSub, 
+    fontSize: 14, 
+    fontWeight: 'bold', 
+    marginBottom: 10, 
+    marginTop: 20, 
+    textTransform: 'uppercase', 
+    letterSpacing: 1
+  }
 });

@@ -30,7 +30,7 @@ export const useTodoStore = create<TodoState>()(
             title,
             description: description || '',
             isDone: false,
-            dueDate: dueDate || 'Today', // Mặc định là Today nếu không chọn
+            dueDate: dueDate || 'Today',
           },
           ...state.todos,
         ],
