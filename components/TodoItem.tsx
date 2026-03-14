@@ -1,12 +1,14 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS } from '../constants/colors';
+
 export interface Todo{
     id: string; 
     title: string; 
     description: string; 
     isDone: boolean; 
+    imageBase64: string | null; 
 }
 interface TodoItemProps{
     item: Todo; 
@@ -27,10 +29,16 @@ export default function TodoItem({item, onToggle, onDelete} : TodoItemProps){
                         {item.title}
                     </Text>
                     {item.description ? (
-                    <Text style = {[styles.itemDescription, item.isDone && styles.textDone]} numberOfLines = {2}> 
-                    {item.description} 
-                    </Text>
-                ) : null}
+                        <Text style = {[styles.itemDescription, item.isDone && styles.textDone]} numberOfLines = {2}> 
+                        {item.description} 
+                        </Text>
+                    ) : null}
+                    {item.imageBase64 ? (
+                        <Image 
+                            source={{ uri: `data:image/jpeg;base64,${item.imageBase64}` }} 
+                            style={[styles.todoImage, item.isDone && { opacity: 0.5 }]} 
+                        />
+                    ) : null}
                 </View>
                 
             </TouchableOpacity>
@@ -66,5 +74,14 @@ const styles = StyleSheet.create({
         flex: 1, justifyContent: 'center', 
         flexDirection: 'column', 
         alignItems: 'flex-start'
+    }, 
+    todoImage: {
+        width: 80,
+        height: 80,
+        borderRadius: 8,
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        resizeMode: 'cover' // Giúp ảnh không bị méo
     }
 })

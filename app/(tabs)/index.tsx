@@ -7,20 +7,21 @@ import FilterButton from '../../components/FilterButton';
 import InputModal from '../../components/InputModal';
 import TodoItem, { Todo } from '../../components/TodoItem';
 import { COLORS } from '../../constants/colors';
-
 const STORAGE_KEY = 'MY_TODO_APP_DATA';
-
+const API_URL = 'http://10.0.2.2:8082/api/todos';
 export default function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
-
+  const [isLoading, setIsloading] = useState(true); 
+  
   // --- LOGIC STORAGE ---
   useEffect(() => {
     const loadTodos = async () => {
       try {
-        const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-        if (jsonValue) setTodos(JSON.parse(jsonValue));
+        const response = await fetch(API_URL); 
+        const data = await response.json(); 
+        setTodos(data); 
       } catch (e) { console.error("Lỗi đọc data"); }
     };
     loadTodos();
@@ -36,27 +37,52 @@ export default function App() {
   }, [todos]);
 
   // --- LOGIC XỬ LÝ ---
-  const handleAddData = (title: string, desc: string) => {
-    const newTodo: Todo = {
+  const handleAddData = async (title: string, desc: string, imageBase64: string | null) => {
+    const newTodo = {
       id: Date.now().toString(),
       title: title.trim(),
       description: desc.trim(),
-      isDone: false
+      isDone: false,
+      imageBase64: imageBase64 
     };
-    setTodos([newTodo, ...todos]);
-    setModalVisible(false);
-  };
 
-  const toggleTodo = (id: string) => {
-    setTodos(todos.map(item =>
-      item.id === id ? { ...item, isDone: !item.isDone } : item
-    ));
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTodo)
+      });
+      const savedTodo = await response.json();
+      
+      setTodos([savedTodo, ...todos]);
+      setModalVisible(false);
+    } catch (error) {
+      console.error("Lỗi khi thêm Todo:", error);
+    }
+  }
+
+  const toggleTodo = async (id: string) => {
+    try{
+      await fetch(`${API_URL}/${id}`, {method: 'PUT'}); 
+      setTodos(todos.map(item => 
+        item.id === id ? {...item, isDone: !item.isDone}: item
+      )); 
+    }catch(error) {
+      console.error("Lỗi khi update Todo:", error); 
+    }
   };
 
   const deleteTodo = (id: string) => {
     Alert.alert("Xác nhận xóa", "Bạn có chắc muốn xóa?", [
       { text: "Hủy", style: 'cancel' },
-      { text: "Xóa", style: 'destructive', onPress: () => setTodos(todos.filter(i => i.id !== id)) }
+      { text: "Xóa", style: 'destructive', onPress: async() => {
+        try{
+          await fetch(`${API_URL}/${id}`, { method: 'DELETE' }); 
+          setTodos(todos.filter(item => item.id !== id)); 
+        }catch(error){
+          console.error("Lỗi khi xóa Todo", error); 
+        }
+      }}
     ]);
   };
 
@@ -110,7 +136,7 @@ export default function App() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <Text style = {{color: '#666', textAlign: 'center', marginTop: 50}}> 
-            Không có công việc nào 
+            Không có công việc nào....
           </Text>
         }
       /> 
