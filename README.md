@@ -3,7 +3,7 @@
 Một ứng dụng quản lý công việc đơn giản và hiệu quả, được xây dựng bằng **React Native** và **Expo**. Ứng dụng giúp bạn theo dõi các đầu việc cần làm, đánh dấu hoàn thành và quản lý tiến độ hàng ngày.
 
 
-## ✨ Tính năng chính
+## Tính năng chính
 
 * **Thêm công việc mới:** Nhập tiêu đề và mô tả chi tiết cho công việc.
 * **Danh sách công việc:** Hiển thị trực quan danh sách các việc cần làm.
@@ -23,7 +23,7 @@ Một ứng dụng quản lý công việc đơn giản và hiệu quả, đư�
 * **Icons:** @expo/vector-icons (MaterialIcons)
 * **Lưu trữ:** Local Storage
 
-## 🚀 Cài đặt và Chạy dự án (Quick Start)
+## Cài đặt và Chạy dự án (Quick Start)
 
 Bạn hãy chạy lần lượt các lệnh dưới đây trong Terminal để tải về và khởi chạy ứng dụng:
 ```bash
