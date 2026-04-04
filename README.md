@@ -3,7 +3,7 @@
 Một ứng dụng quản lý công việc đơn giản và hiệu quả, được xây dựng bằng **React Native** và **Expo**. Ứng dụng giúp bạn theo dõi các đầu việc cần làm, đánh dấu hoàn thành và quản lý tiến độ hàng ngày.
 
 
-## ✨ Tính năng chính
+## Tính năng chính
 
 * **Thêm công việc mới:** Nhập tiêu đề và mô tả chi tiết cho công việc.
 * **Danh sách công việc:** Hiển thị trực quan danh sách các việc cần làm.
@@ -14,7 +14,7 @@ Một ứng dụng quản lý công việc đơn giản và hiệu quả, đư�
 * **Thống kê:** Hiển thị số lượng công việc cần làm hiện tại (Ví dụ: "7 công việc cần làm").
 * **Giao diện:** Thiết kế tối (Dark Mode) hiện đại, dễ nhìn.
 
-## 🛠️ Công nghệ sử dụng
+## Công nghệ sử dụng
 
 * **Core:** [React Native](https://reactnative.dev/), [Expo](https://expo.dev/)
 * **Ngôn ngữ:** [TypeScript](https://www.typescriptlang.org/)
