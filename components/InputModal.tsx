@@ -16,7 +16,7 @@ import { COLORS } from '../constants/colors';
 interface InputModalProps {
   visible: boolean;                        // Trạng thái ẩn/hiện
   onClose: () => void;                     // Hàm để đóng modal
-  onSave: (title: string, desc: string, imageBase: string | null) => void; // Hàm để lưu dữ liệu
+  onSave: (title: string, desc: string, imageBase64: string | null) => void; 
 }
 
 export default function InputModal({ visible, onClose, onSave }: InputModalProps) {

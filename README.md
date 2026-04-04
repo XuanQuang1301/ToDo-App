@@ -23,7 +23,7 @@ Một ứng dụng quản lý công việc đơn giản và hiệu quả, đư�
 * **Icons:** @expo/vector-icons (MaterialIcons)
 * **Lưu trữ:** Local Storage
 
-## 🚀 Cài đặt và Chạy dự án (Quick Start)
+##  Cài đặt và Chạy dự án (Quick Start)
 
 Bạn hãy chạy lần lượt các lệnh dưới đây trong Terminal để tải về và khởi chạy ứng dụng:
 ```bash
