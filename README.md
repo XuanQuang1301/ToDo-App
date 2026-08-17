@@ -1,4 +1,4 @@
-# My Todo List App 📱
+# My Todo List App 
 
 Một ứng dụng quản lý công việc đơn giản và hiệu quả, được xây dựng bằng **React Native** và **Expo**. Ứng dụng giúp bạn theo dõi các đầu việc cần làm, đánh dấu hoàn thành và quản lý tiến độ hàng ngày.
 
@@ -41,13 +41,13 @@ npx expo start
 Sau khi chạy xong, nhấn a để mở trên Android hoặc i để mở trên iOS.
 ```
 
-🤝 Đóng góp
+ Đóng góp
 
 Mọi đóng góp đều được hoan nghênh! Nếu bạn tìm thấy lỗi hoặc muốn thêm tính năng mới, hãy tạo một Issue hoặc gửi Pull Request.
 
-## 👤 Author
+##  Author
 **Xuan Quang**
 - GitHub: [@XuanQuang1301](https://github.com/XuanQuang1301)
 
 ---
-*⭐️ Star dự án này nếu bạn thấy nó hữu ích!*
+* Star dự án này nếu bạn thấy nó hữu ích!*
